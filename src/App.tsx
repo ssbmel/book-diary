@@ -1,26 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import loginImg from '../public/images/clean-empty-library-hall.jpg'
+import Login from './components/Login';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='w-full h-svh flex'>
+      <div className='w-[45%]'>
+        <h1 className='mt-[200px] text-center text-[24px]'>나만의 도서관</h1>
+        <Login/>
+      </div>
+
+      <div className='w-[55%]'>
+        <img 
+          src={`${process.env.PUBLIC_URL}/images/clean-empty-library-hall.jpg`} 
+          alt="Library Hall"
+          className='w-full h-full object-cover' 
+        />
+      </div>
     </div>
   );
 }
 
 export default App;
+
