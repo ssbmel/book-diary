@@ -1,10 +1,9 @@
 import './App.css';
-import loginImg from '../public/images/clean-empty-library-hall.jpg'
 import Login from './components/Login';
 
 function App() {
   return (
-    <div className='w-full h-svh flex'>
+    <div className='w-full h-svh flex bg-[#FFFAFA]'>
       <div className='w-[45%]'>
         <h1 className='mt-[200px] text-center text-[24px]'>나만의 도서관</h1>
         <Login/>
