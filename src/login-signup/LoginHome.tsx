@@ -2,7 +2,7 @@ import GeneralLogin from "./GeneralLogin"
 
 function LoginHome() {
   return (
-    <div className='w-full h-svh flex bg-[#FFFAFA]'>
+    <div className='w-full h-svh flex xl:bg-[#FFFAFA]'>
       <div className='w-full xl:w-[45%]'>
         <h1 className='mt-[200px] text-center text-[24px]'>나만의 도서관</h1>
         <GeneralLogin/>

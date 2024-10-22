@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Signup() {
   return (
-      <div className="w-full h-full mx-auto mt-[120px]">
+      <div className="w-full h-full mx-auto mt-[100px]">
         <div className="p-10 grid gap-5">
             <h1 className="text-center mb-[24px] text-[18px]">회원가입</h1>
         <input
