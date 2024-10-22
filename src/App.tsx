@@ -1,24 +1,11 @@
-import './App.css';
-import Login from './components/Login';
+// import { BrowserRouter as Router } from "react-router-dom";
+import "./App.css";
+import Router from "./Router";
 
 function App() {
   return (
-    <div className='w-full h-svh flex bg-[#FFFAFA]'>
-      <div className='w-[45%]'>
-        <h1 className='mt-[200px] text-center text-[24px]'>나만의 도서관</h1>
-        <Login/>
-      </div>
-
-      <div className='w-[55%]'>
-        <img 
-          src={`${process.env.PUBLIC_URL}/images/clean-empty-library-hall.jpg`} 
-          alt="Library Hall"
-          className='w-full h-full object-cover' 
-        />
-      </div>
-    </div>
+      <Router />
   );
 }
 
 export default App;
-

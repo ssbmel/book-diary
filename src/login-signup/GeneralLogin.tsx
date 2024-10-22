@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Login() {
+function GeneralLogin() {
   return (
     <div className='w-[200px] mx-auto grid gap-5 mt-[40px]'>
         <input type="text" placeholder='아이디' className='p-1 px-3 border-b-2 rounded-sm shadow-sm'/>
@@ -15,8 +15,7 @@ function Login() {
             </div>
         </div>
     </div>
-
   )
 }
 
-export default Login
+export default GeneralLogin;
