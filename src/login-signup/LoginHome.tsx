@@ -1,6 +1,5 @@
 import GeneralLogin from "./GeneralLogin"
 
-
 function LoginHome() {
   return (
     <div className='w-full h-svh flex bg-[#FFFAFA]'>
