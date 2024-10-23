@@ -1,32 +1,133 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import supabase from "../supabase/supabaseClient";
 
 export default function Signup() {
+  const [email, setEmail] = useState<string>("");
+  const [nickname, setNickname] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+  const [isEmail, setIsEmail] = useState<boolean>(false);
+  const [isPassword, setIsPassword] = useState<boolean>(false);
+  const [isConfirmPassword, setIsConfirmPassword] = useState<boolean>(false);
+  const [isCheckedAccept, setIsCheckedAccept] = useState<boolean>(false);
+
+  const [emailMsg, setEmailMsg] = useState<string>("");
+  const [passwordMsg, setPasswordMsg] = useState<string>("");
+  const [confirmPasswordMsg, setConfirmPasswordMsg] = useState<string>("");
+
+  const navigate = useNavigate();
+
+  const emailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {value} = e.target;
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setEmail(value);
+    if(!regex.test(value)) {
+      setEmailMsg("올바른 이메일 형식이 아닙니다.");
+      setIsEmail(false);
+    }else {
+      setIsEmail(true);
+    }
+  }
+
+  const nicknameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNickname(e.target.value);
+  }
+
+  const passwordHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {value} = e.target;
+    const regex = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*]).{8,}$/;
+    setPassword(value);
+    if(!regex.test(value)) {
+      setPasswordMsg("숫자, 영문, 특수문자를 포함하여 최소 8자를 입력해주세요.");
+      setIsPassword(false);
+    }else {
+      setIsPassword(true);
+    }
+  }
+
+  const confirmPasswordHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {value} = e.target;
+    setConfirmPassword(value);
+    if(password === value) {
+      setConfirmPasswordMsg("비밀번호가 일치합니다.");
+      setIsConfirmPassword(true);
+    }else {
+      setConfirmPasswordMsg("비밀번호가 일치하지 않습니다.");
+      setIsConfirmPassword(false);
+    }
+  }
+
+  const checkedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsCheckedAccept(e.target.checked);
+    console.log(isCheckedAccept);
+  }
+
+  const registerUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if(!isCheckedAccept){
+      alert("개인정보의 수집 및 이용에 대한 동의를 체크해주세요.")
+      return;
+    };
+    const {data, error} = await supabase.auth.signUp({
+      email : email,
+      password : password,
+      options : {
+        data: {
+          nickname : nickname,
+        }
+      }
+    });
+    alert("회원가입이 완료되었습니다! 로그인을 진행해주세요.")
+    navigate("/loginhome");
+    if(error) {
+      throw error;
+   }
+  }
+
   return (
-      <div className="w-full h-full mx-auto mt-[100px]">
+      <form onSubmit={registerUser} className="w-full h-full mx-auto mt-[100px]">
         <div className="p-10 grid gap-5">
             <h1 className="text-center mb-[24px] text-[18px]">회원가입</h1>
         <input
           type="text"
           placeholder="이메일"
+          value={email}
+          onChange={emailHandler}
           className="p-1 px-3 border-b-2 rounded-sm shadow-sm"
         />
+        {isEmail === false && email !== "" && <p className="text-[12px] text-center text-red-800">{emailMsg}</p>}
         <input
           type="text"
           placeholder="닉네임"
+          value={nickname}
+          onChange={nicknameHandler}
           className="p-1 px-3 border-b-2 rounded-sm shadow-sm"
         />
         <input
           type="password"
           placeholder="비밀번호"
+          value={password}
+          onChange={passwordHandler}
           className="p-1 px-3 border-b-2 rounded-sm shadow-sm"
         />
+        {isPassword === false && password !== "" && <p className="text-[12px] text-center text-red-800">{passwordMsg}</p>}
         <input
           type="password"
           placeholder="비밀번호재확인"
+          value={confirmPassword}
+          onChange={confirmPasswordHandler}
           className="p-1 px-3 border-b-2 rounded-sm shadow-sm"
         />
-        <span className="text-gray-500 mx-auto"><input type="checkbox" className="mr-2 mt-5"/>개인정보의 수집 및 이용에 대한 동의 (필수)</span>
+        {isConfirmPassword === false && confirmPassword !== "" && <p className="text-[12px] text-center text-red-800">{confirmPasswordMsg}</p>}
+        <span className="text-gray-500 mx-auto">
+          <input 
+          type="checkbox"
+          checked={isCheckedAccept}
+          onChange={checkedHandler}
+          className="mr-2 mt-5"/>개인정보의 수집 및 이용에 대한 동의 (필수)
+        </span>
         </div>
 
         <div className="grid px-10 gap-2">
@@ -38,6 +139,6 @@ export default function Signup() {
         </Link>
         </div>
         
-      </div>
+      </form>
   );
 }
