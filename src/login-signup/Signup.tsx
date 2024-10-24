@@ -93,15 +93,14 @@ export default function Signup() {
       alert("비밀번호를 재확인해주세요.");
       return;
     }
-
-    if (isEmail || isNickname || isPassword || isConfirmPassword) {
-      alert("회원가입 형식에 맞게 입력해주세요.");
-      return;
-    }
     if (!isCheckedAccept) {
       alert("개인정보의 수집 및 이용에 대한 동의를 체크해주세요.");
       return;
     }
+    if (!isEmail || !isNickname || !isPassword || !isConfirmPassword) {
+      alert("회원가입 형식에 맞게 입력해주세요.");
+      return;
+    } 
 
     const { data, error } = await supabase.auth.signUp({
       email: email,
@@ -115,9 +114,19 @@ export default function Signup() {
     alert("회원가입이 완료되었습니다! 로그인을 진행해주세요.");
     navigate("/loginhome");
 
+    console.log(data);
+    
     if (error) {
       throw error;
     }
+
+    const { data : user } = await supabase.from("users").insert({
+      id: data.user?.id,
+      nickname: nickname,
+      email: data.user?.email,
+      profile_img: "",
+    });
+
   };
 
   return (
