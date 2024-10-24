@@ -9,87 +9,121 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const [isEmail, setIsEmail] = useState<boolean>(false);
+  const [isNickname, setIsNickname] = useState<boolean>(false);
   const [isPassword, setIsPassword] = useState<boolean>(false);
   const [isConfirmPassword, setIsConfirmPassword] = useState<boolean>(false);
   const [isCheckedAccept, setIsCheckedAccept] = useState<boolean>(false);
 
   const [emailMsg, setEmailMsg] = useState<string>("");
+  const [nicknameMsg, setNicknameMsg] = useState<string>("");
   const [passwordMsg, setPasswordMsg] = useState<string>("");
   const [confirmPasswordMsg, setConfirmPasswordMsg] = useState<string>("");
 
   const navigate = useNavigate();
 
   const emailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {value} = e.target;
+    const { value } = e.target;
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmail(value);
-    if(!regex.test(value)) {
+    if (!regex.test(value)) {
       setEmailMsg("올바른 이메일 형식이 아닙니다.");
       setIsEmail(false);
-    }else {
+    } else {
       setIsEmail(true);
     }
-  }
+  };
 
   const nicknameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const regex = /^[a-zA-Z0-9가-힣\s]+(?![ㄱ-ㅎㅏ-ㅣ])$/;
     setNickname(e.target.value);
-  }
+    if(!regex.test(value)) {
+      setNicknameMsg("한글,영문,숫자로 최대 8자이내로 지어주세요.");
+      setIsNickname(false);
+    } else {
+      setIsNickname(true);
+    }
+  };
 
   const passwordHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {value} = e.target;
+    const { value } = e.target;
     const regex = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*]).{8,}$/;
     setPassword(value);
-    if(!regex.test(value)) {
-      setPasswordMsg("숫자, 영문, 특수문자를 포함하여 최소 8자를 입력해주세요.");
+    if (!regex.test(value)) {
+      setPasswordMsg(
+        "숫자, 영문, 특수문자를 포함하여 최소 8자를 입력해주세요."
+      );
       setIsPassword(false);
-    }else {
+    } else {
       setIsPassword(true);
     }
-  }
+  };
 
   const confirmPasswordHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {value} = e.target;
+    const { value } = e.target;
     setConfirmPassword(value);
-    if(password === value) {
+    if (password === value) {
       setConfirmPasswordMsg("비밀번호가 일치합니다.");
       setIsConfirmPassword(true);
-    }else {
+    } else {
       setConfirmPasswordMsg("비밀번호가 일치하지 않습니다.");
       setIsConfirmPassword(false);
     }
-  }
+  };
 
   const checkedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsCheckedAccept(e.target.checked);
-    console.log(isCheckedAccept);
-  }
+  };
 
   const registerUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(!isCheckedAccept){
-      alert("개인정보의 수집 및 이용에 대한 동의를 체크해주세요.")
+    if (email === "") {
+      alert("이메일을 입력해주세요.");
       return;
-    };
-    const {data, error} = await supabase.auth.signUp({
-      email : email,
-      password : password,
-      options : {
+    }
+    if (nickname === "") {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+    if (password === "") {
+      alert("비밀번호을 입력해주세요.");
+      return;
+    }
+    if (confirmPassword === "") {
+      alert("비밀번호를 재확인해주세요.");
+      return;
+    }
+
+    if (isEmail || isNickname || isPassword || isConfirmPassword) {
+      alert("회원가입 형식에 맞게 입력해주세요.");
+      return;
+    }
+    if (!isCheckedAccept) {
+      alert("개인정보의 수집 및 이용에 대한 동의를 체크해주세요.");
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
         data: {
-          nickname : nickname,
-        }
-      }
+          nickname: nickname,
+        },
+      },
     });
-    alert("회원가입이 완료되었습니다! 로그인을 진행해주세요.")
+    alert("회원가입이 완료되었습니다! 로그인을 진행해주세요.");
     navigate("/loginhome");
-    if(error) {
+
+    if (error) {
       throw error;
-   }
-  }
+    }
+  };
 
   return (
-      <form onSubmit={registerUser} className="w-full h-full mx-auto mt-[100px]">
-        <div className="p-10 grid gap-5">
-            <h1 className="text-center mb-[24px] text-[18px]">회원가입</h1>
+    <form onSubmit={registerUser} className="w-full h-full mx-auto mt-[100px]">
+      <div className="p-10 grid gap-5">
+        <h1 className="text-center mb-[24px] text-[18px]">회원가입</h1>
         <input
           type="text"
           placeholder="이메일"
@@ -97,14 +131,20 @@ export default function Signup() {
           onChange={emailHandler}
           className="p-1 px-3 border-b-2 rounded-sm shadow-sm"
         />
-        {isEmail === false && email !== "" && <p className="text-[12px] text-center text-red-800">{emailMsg}</p>}
+        {isEmail === false && email !== "" && (
+          <p className="text-[12px] pl-2 text-red-800">{emailMsg}</p>
+        )}
         <input
           type="text"
           placeholder="닉네임"
+          maxLength={8}
           value={nickname}
           onChange={nicknameHandler}
           className="p-1 px-3 border-b-2 rounded-sm shadow-sm"
         />
+        {isNickname === false && nickname !== "" && (
+          <p className="text-[12px] pl-2 text-red-800">{nicknameMsg}</p>
+        )}
         <input
           type="password"
           placeholder="비밀번호"
@@ -112,7 +152,9 @@ export default function Signup() {
           onChange={passwordHandler}
           className="p-1 px-3 border-b-2 rounded-sm shadow-sm"
         />
-        {isPassword === false && password !== "" && <p className="text-[12px] text-center text-red-800">{passwordMsg}</p>}
+        {isPassword === false && password !== "" && (
+          <p className="text-[12px] pl-2 text-red-800">{passwordMsg}</p>
+        )}
         <input
           type="password"
           placeholder="비밀번호재확인"
@@ -120,25 +162,31 @@ export default function Signup() {
           onChange={confirmPasswordHandler}
           className="p-1 px-3 border-b-2 rounded-sm shadow-sm"
         />
-        {isConfirmPassword === false && confirmPassword !== "" && <p className="text-[12px] text-center text-red-800">{confirmPasswordMsg}</p>}
-        <span className="text-gray-500 mx-auto">
-          <input 
-          type="checkbox"
-          checked={isCheckedAccept}
-          onChange={checkedHandler}
-          className="mr-2 mt-5"/>개인정보의 수집 및 이용에 대한 동의 (필수)
+        {isConfirmPassword === false && confirmPassword !== "" && (
+          <p className="text-[12px] pl-2 text-red-800">{confirmPasswordMsg}</p>
+        )}
+        <span className="text-gray-500 mx-auto text-[14px]">
+          <input
+            type="checkbox"
+            checked={isCheckedAccept}
+            onChange={checkedHandler}
+            className="mr-2 mt-5"
+          />
+          개인정보의 수집 및 이용에 대한 동의 (필수)
         </span>
-        </div>
+      </div>
 
-        <div className="grid px-10 gap-2">
+      <div className="grid px-10 gap-2">
         <button className="bg-red-950 text-white p-[6px] rounded-sm mt-[15px]">
           가입하기
         </button>
-        <Link to={'/loginhome'} className="bg-black text-white p-[6px] rounded-sm text-center">
+        <Link
+          to={"/loginhome"}
+          className="bg-black text-white p-[6px] rounded-sm text-center"
+        >
           뒤로가기
         </Link>
-        </div>
-        
-      </form>
+      </div>
+    </form>
   );
 }
